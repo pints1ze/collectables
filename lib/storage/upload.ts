@@ -76,4 +76,56 @@ export async function uploadItemImage(
 // Instead, we keep the image in memory until the item is created,
 // then upload it directly to the item's location.
 
+/**
+ * Extracts the file path from a Supabase Storage public URL
+ * @param publicUrl The public URL from Supabase Storage (e.g., https://project.supabase.co/storage/v1/object/public/item-images/itemId/timestamp.ext)
+ * @returns The file path (e.g., itemId/timestamp.ext) or null if the URL format is invalid
+ */
+export function extractFilePathFromUrl(publicUrl: string): string | null {
+  try {
+    // Supabase Storage public URLs have the format:
+    // https://<project>.supabase.co/storage/v1/object/public/<bucket>/<file-path>
+    const url = new URL(publicUrl)
+    const pathParts = url.pathname.split('/')
+    const bucketIndex = pathParts.indexOf('public')
+    
+    if (bucketIndex === -1 || bucketIndex === pathParts.length - 1) {
+      return null
+    }
+    
+    // Everything after 'public/<bucket>/' is the file path
+    // pathParts structure: ['', 'storage', 'v1', 'object', 'public', 'item-images', 'itemId', 'timestamp.ext']
+    const filePath = pathParts.slice(bucketIndex + 2).join('/')
+    return filePath || null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Deletes an image file from Supabase Storage
+ * @param supabase The Supabase client
+ * @param imageUrl The public URL of the image to delete
+ * @returns Promise that resolves when the deletion is complete
+ */
+export async function deleteItemImage(
+  supabase: SupabaseClient,
+  imageUrl: string
+): Promise<void> {
+  const filePath = extractFilePathFromUrl(imageUrl)
+  
+  if (!filePath) {
+    console.warn('Could not extract file path from URL:', imageUrl)
+    return
+  }
+  
+  const { error } = await supabase.storage
+    .from('item-images')
+    .remove([filePath])
+  
+  if (error) {
+    console.error('Error deleting image from storage:', error)
+    throw error
+  }
+}
 

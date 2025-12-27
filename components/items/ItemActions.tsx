@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { deleteItemImage } from '@/lib/storage/upload'
 import ConfirmDialog from '@/components/ui/ConfirmDialog'
 import Button from '@/components/ui/Button'
 
@@ -30,6 +31,24 @@ export default function ItemActions({ collectionId, itemId, itemTitle }: ItemAct
         .eq('item_id', itemId)
       
       const tagIds = itemTags?.map(it => it.tag_id) || []
+      
+      // Get all images associated with this item before deletion
+      const { data: itemImages } = await supabase
+        .from('item_images')
+        .select('image_url')
+        .eq('item_id', itemId)
+      
+      // Delete all image files from storage
+      if (itemImages && itemImages.length > 0) {
+        for (const image of itemImages) {
+          try {
+            await deleteItemImage(supabase, image.image_url)
+          } catch (error) {
+            // Log error but continue with deletion - don't fail the entire operation
+            console.error('Error deleting image from storage:', error)
+          }
+        }
+      }
       
       // Delete the item (this will cascade delete item_tags and item_images)
       const { error } = await supabase
