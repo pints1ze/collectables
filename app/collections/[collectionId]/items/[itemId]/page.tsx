@@ -1,9 +1,8 @@
 import { redirect, notFound } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import Image from 'next/image'
-import Link from 'next/link'
-import Button from '@/components/ui/Button'
 import Breadcrumbs from '@/components/layout/Breadcrumbs'
+import ItemActions from '@/components/items/ItemActions'
 import type { Item, ItemImage, Tag, Collection } from '@/types/entities'
 
 interface ItemPageProps {
@@ -94,11 +93,11 @@ export default async function ItemPage({ params }: ItemPageProps) {
               <h1 className="text-3xl font-bold text-gray-900">
                 {(item as Item).title}
               </h1>
-              <Link href={`/collections/${collectionId}/items/${itemId}/edit`}>
-                <Button variant="secondary" size="sm">
-                  Edit
-                </Button>
-              </Link>
+              <ItemActions
+                collectionId={collectionId}
+                itemId={itemId}
+                itemTitle={(item as Item).title}
+              />
             </div>
             
             {(item as Item).description && (
