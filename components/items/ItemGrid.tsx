@@ -50,3 +50,4 @@ export default async function ItemGrid({ items, collectionId }: ItemGridProps) {
   )
 }
 
+

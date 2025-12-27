@@ -13,3 +13,4 @@ export function validateYear(year: number | null | undefined): boolean {
   return year >= 1000 && year <= currentYear + 10
 }
 
+

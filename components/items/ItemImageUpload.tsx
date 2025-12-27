@@ -48,7 +48,28 @@ export default function ItemImageUpload({
     
     setUploading(true)
     try {
+      // #region agent log
+      const { data: { user } } = await supabase.auth.getUser();
+      fetch('http://127.0.0.1:7243/ingest/a45f423f-dbfd-4a32-a0be-34181c1b8c4d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ItemImageUpload.tsx:49',message:'Upload start - auth check',data:{itemId,userId:user?.id,userEmail:user?.email},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+      // #endregion
+      
+      // #region agent log
+      const { data: itemData, error: itemCheckError } = await supabase.from('items').select('id, collection_id').eq('id', itemId).single();
+      fetch('http://127.0.0.1:7243/ingest/a45f423f-dbfd-4a32-a0be-34181c1b8c4d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ItemImageUpload.tsx:52',message:'Item ownership check',data:{itemId,itemData,itemCheckError:itemCheckError?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+      // #endregion
+      
+      // #region agent log
+      if (itemData) {
+        const { data: collectionData, error: collectionCheckError } = await supabase.from('collections').select('id, user_id').eq('id', itemData.collection_id).single();
+        fetch('http://127.0.0.1:7243/ingest/a45f423f-dbfd-4a32-a0be-34181c1b8c4d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ItemImageUpload.tsx:56',message:'Collection ownership check',data:{collectionId:itemData.collection_id,collectionData,collectionCheckError:collectionCheckError?.message,collectionUserId:collectionData?.user_id,currentUserId:user?.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+      }
+      // #endregion
+      
       const imageUrl = await uploadItemImage(supabase, file, itemId)
+      
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/a45f423f-dbfd-4a32-a0be-34181c1b8c4d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ItemImageUpload.tsx:62',message:'Storage upload succeeded',data:{imageUrl,itemId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
       
       // Create item_image record
       const { data: imageData, error: imageError } = await supabase
@@ -61,6 +82,10 @@ export default function ItemImageUpload({
         .select()
         .single()
       
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/a45f423f-dbfd-4a32-a0be-34181c1b8c4d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ItemImageUpload.tsx:72',message:'Database insert result',data:{imageData,imageError:imageError?.message,imageErrorCode:imageError?.code,imageErrorDetails:imageError?.details,itemId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
+      
       if (imageError) throw imageError
       
       onUploadComplete(imageUrl, imageData.id)
@@ -68,7 +93,10 @@ export default function ItemImageUpload({
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
-    } catch (error) {
+    } catch (error: any) {
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/a45f423f-dbfd-4a32-a0be-34181c1b8c4d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ItemImageUpload.tsx:81',message:'Upload error caught',data:{errorMessage:error?.message,errorName:error?.name,errorCode:error?.code,errorDetails:error?.details,itemId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,B'})}).catch(()=>{});
+      // #endregion
       console.error('Error uploading image:', error)
       alert('Failed to upload image. Please try again.')
     } finally {
