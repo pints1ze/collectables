@@ -1,17 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import ItemForm, { type ItemFormData } from '@/components/items/ItemForm'
 import ItemImageCapture from '@/components/items/ItemImageCapture'
 import ImageSearchResults from '@/components/items/ImageSearchResults'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import Button from '@/components/ui/Button'
 import { uploadItemImage } from '@/lib/storage/upload'
 import type { ImageAnalysisResult } from '@/app/api/analyze-image/route'
 import type { ImageSearchResult, ScrapedProductData } from '@/types/api'
 
-type Step = 'capture' | 'searching' | 'selecting' | 'scraping' | 'analyzing' | 'form'
+type Step = 'capture' | 'searching' | 'selecting' | 'scraping' | 'analyzing' | 'form' | 'success'
 
 export default function NewItemPage() {
   const router = useRouter()
@@ -26,6 +27,7 @@ export default function NewItemPage() {
   const [scrapedData, setScrapedData] = useState<ScrapedProductData | null>(null)
   const [aiSuggestions, setAiSuggestions] = useState<Partial<ItemFormData> | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [createdItemId, setCreatedItemId] = useState<string | null>(null)
   
   const handleImageCaptured = async (file: File, preview: string) => {
     try {
@@ -272,7 +274,32 @@ export default function NewItemPage() {
       }
     }
     
-    router.push(`/collections/${collectionId}/items/${item.id}`)
+    // Store the created item ID and show success state
+    setCreatedItemId(item.id)
+    setStep('success')
+  }
+  
+  const handleAddAnother = () => {
+    // Reset all state to start fresh
+    setStep('capture')
+    setTempImageFile(null)
+    setTempImagePreview(null)
+    setSearchResults([])
+    setScrapedData(null)
+    setAiSuggestions(null)
+    setError(null)
+    setCreatedItemId(null)
+  }
+  
+  const handleViewItem = () => {
+    if (createdItemId) {
+      router.push(`/collections/${collectionId}/items/${createdItemId}`)
+      router.refresh()
+    }
+  }
+  
+  const handleBackToCollection = () => {
+    router.push(`/collections/${collectionId}`)
     router.refresh()
   }
   
@@ -393,6 +420,43 @@ export default function NewItemPage() {
               onCancel={handleCancel}
               initialData={aiSuggestions}
             />
+          </div>
+        )}
+        
+        {step === 'success' && (
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="bg-green-50 border border-green-200 rounded-lg p-6 max-w-md w-full text-center">
+              <div className="flex justify-center mb-4">
+                <svg className="w-16 h-16 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-green-900 mb-2">Item Created Successfully!</h2>
+              <p className="text-green-800 mb-6">Your item has been added to the collection.</p>
+              
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  onClick={handleAddAnother}
+                  className="flex-1"
+                >
+                  Add Another Item
+                </Button>
+                <Button
+                  onClick={handleViewItem}
+                  variant="secondary"
+                  className="flex-1"
+                >
+                  View Item
+                </Button>
+                <Button
+                  onClick={handleBackToCollection}
+                  variant="ghost"
+                  className="flex-1"
+                >
+                  Back to Collection
+                </Button>
+              </div>
+            </div>
           </div>
         )}
       </div>
