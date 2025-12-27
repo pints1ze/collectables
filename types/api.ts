@@ -42,4 +42,43 @@ export interface ApplyMatchResponse {
   source_url: string
 }
 
+// Google Custom Search Integration
+export interface ImageSearchResult {
+  title: string
+  url: string
+  snippet: string
+  thumbnail?: string
+  displayLink: string
+}
+
+export interface ImageSearchResponse {
+  results: ImageSearchResult[]
+  totalResults?: number
+  error?: string
+}
+
+export interface ImageSearchRequest {
+  image: File
+}
+
+// Product Scraping
+export interface ScrapedProductData {
+  title: string | null
+  description: string | null
+  brand: string | null
+  series_name: string | null
+  year_released: number | null
+  sku: string | null
+}
+
+export interface ScrapeProductRequest {
+  url: string
+}
+
+export interface ScrapeProductResponse {
+  data: ScrapedProductData
+  success: boolean
+  error?: string
+}
+
 

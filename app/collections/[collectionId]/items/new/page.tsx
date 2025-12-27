@@ -5,11 +5,13 @@ import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import ItemForm, { type ItemFormData } from '@/components/items/ItemForm'
 import ItemImageCapture from '@/components/items/ItemImageCapture'
+import ImageSearchResults from '@/components/items/ImageSearchResults'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import { uploadItemImage } from '@/lib/storage/upload'
 import type { ImageAnalysisResult } from '@/app/api/analyze-image/route'
+import type { ImageSearchResult, ScrapedProductData } from '@/types/api'
 
-type Step = 'capture' | 'analyzing' | 'form'
+type Step = 'capture' | 'searching' | 'selecting' | 'scraping' | 'analyzing' | 'form'
 
 export default function NewItemPage() {
   const router = useRouter()
@@ -20,17 +22,123 @@ export default function NewItemPage() {
   const [step, setStep] = useState<Step>('capture')
   const [tempImageFile, setTempImageFile] = useState<File | null>(null)
   const [tempImagePreview, setTempImagePreview] = useState<string | null>(null)
+  const [searchResults, setSearchResults] = useState<ImageSearchResult[]>([])
+  const [scrapedData, setScrapedData] = useState<ScrapedProductData | null>(null)
   const [aiSuggestions, setAiSuggestions] = useState<Partial<ItemFormData> | null>(null)
   const [error, setError] = useState<string | null>(null)
   
   const handleImageCaptured = async (file: File, preview: string) => {
     try {
       setError(null)
-      setStep('analyzing')
+      setStep('searching')
       
       // Store file and preview in memory (no upload yet)
       setTempImageFile(file)
       setTempImagePreview(preview)
+      
+      // First, search for matching products on hallmark.com
+      console.log('Starting Google Custom Search...')
+      const searchFormData = new FormData()
+      searchFormData.append('image', file)
+      
+      let results: ImageSearchResult[] = []
+      let searchError: string | null = null
+      
+      try {
+        const searchResponse = await fetch('/api/search-images', {
+          method: 'POST',
+          body: searchFormData,
+        })
+        
+        const searchData = await searchResponse.json()
+        results = searchData.results || []
+        searchError = searchData.error || null
+        
+        console.log(`Search completed: ${results.length} results found`, searchError ? `(Error: ${searchError})` : '')
+        
+        if (searchError) {
+          console.warn('Search API returned error:', searchError)
+        }
+      } catch (err) {
+        console.error('Error calling search API:', err)
+        searchError = err instanceof Error ? err.message : 'Failed to search images'
+      }
+      
+      // Always show search results, even if empty or errored
+      setSearchResults(results)
+      
+      // Always show the selection step, even if no results
+      console.log('Moving to selection step with', results.length, 'results')
+      setStep('selecting')
+      
+      // Set error message if search failed, but don't block the UI
+      if (searchError && results.length === 0) {
+        setError(`Search completed but no results found. ${searchError}`)
+      } else {
+        // Clear any previous errors if we have results
+        setError(null)
+      }
+    } catch (err) {
+      console.error('Error in handleImageCaptured:', err)
+      setError(err instanceof Error ? err.message : 'Failed to process image')
+      // Still show the selection step with empty results
+      setSearchResults([])
+      setStep('selecting')
+    }
+  }
+
+  const handleSearchResultSelect = async (result: ImageSearchResult) => {
+    try {
+      setError(null)
+      setStep('scraping')
+      
+      console.log('Scraping product page:', result.url)
+      
+      // Scrape the selected product page
+      const scrapeResponse = await fetch('/api/scrape-product', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: result.url }),
+      })
+      
+      let scraped: ScrapedProductData | null = null
+      if (scrapeResponse.ok) {
+        const scrapeData = await scrapeResponse.json()
+        if (scrapeData.success) {
+          scraped = scrapeData.data
+          setScrapedData(scraped)
+          console.log('Scraped data:', scraped)
+        } else {
+          console.warn('Scraping failed:', scrapeData.error)
+        }
+      } else {
+        const errorData = await scrapeResponse.json().catch(() => ({ error: 'Unknown error' }))
+        console.warn('Scraping request failed:', errorData.error)
+      }
+      
+      // Proceed to AI analysis (will merge with scraped data)
+      // Pass scraped data directly to avoid React state timing issues
+      await proceedToAIAnalysis(tempImageFile!, scraped)
+    } catch (err) {
+      console.error('Error scraping product:', err)
+      // Continue to AI analysis even if scraping fails
+      await proceedToAIAnalysis(tempImageFile!, null)
+    }
+  }
+
+  const handleSearchSkip = async () => {
+    // Skip search/scraping, go directly to AI analysis
+    await proceedToAIAnalysis(tempImageFile!, null)
+  }
+
+  const proceedToAIAnalysis = async (file: File, scrapedDataToMerge: ScrapedProductData | null = null) => {
+    try {
+      setStep('analyzing')
+      
+      // Use passed scraped data or fall back to state (for backwards compatibility)
+      const dataToMerge = scrapedDataToMerge !== null ? scrapedDataToMerge : scrapedData
       
       // Send to AI for analysis
       const formData = new FormData()
@@ -47,25 +155,39 @@ export default function NewItemPage() {
       }
       
       const analysis: ImageAnalysisResult = await response.json()
+      console.log('AI analysis result:', analysis)
+      console.log('Merging with scraped data:', dataToMerge)
       
-      // Convert AI suggestions to form data format
-      const suggestions: Partial<ItemFormData> = {
-        title: analysis.title || '',
-        description: analysis.description || null,
-        brand: analysis.brand || null,
-        series_name: analysis.series_name || null,
-        year_released: analysis.year_released || null,
-        condition: analysis.condition || null,
-        tagIds: [], // Tags will be handled separately if needed
-        primaryImageId: null, // Will be set after item creation
-      }
+      // Merge scraped data with AI analysis (scraped data takes priority)
+      const mergedSuggestions = mergeScrapedAndAIData(dataToMerge, analysis)
       
-      setAiSuggestions(suggestions)
+      console.log('Merged suggestions:', mergedSuggestions)
+      
+      setAiSuggestions(mergedSuggestions)
       setStep('form')
     } catch (err) {
       console.error('Error processing image:', err)
       setError(err instanceof Error ? err.message : 'Failed to process image')
       setStep('capture')
+    }
+  }
+
+  const mergeScrapedAndAIData = (
+    scraped: ScrapedProductData | null,
+    ai: ImageAnalysisResult
+  ): Partial<ItemFormData> => {
+    // Scraped data takes priority, AI fills in missing fields
+    // Use nullish coalescing to properly handle null vs empty string
+    return {
+      title: scraped?.title ?? ai.title ?? '',
+      description: scraped?.description ?? ai.description ?? null,
+      brand: scraped?.brand ?? ai.brand ?? null,
+      series_name: scraped?.series_name ?? ai.series_name ?? null,
+      year_released: scraped?.year_released ?? ai.year_released ?? null,
+      sku: scraped?.sku ?? null, // SKU from scraped data (AI doesn't provide this)
+      condition: ai.condition ?? null, // Condition not scraped
+      tagIds: [], // Tags will be handled separately if needed
+      primaryImageId: null, // Will be set after item creation
     }
   }
   
@@ -162,6 +284,8 @@ export default function NewItemPage() {
       setStep('capture')
       setTempImageFile(null)
       setTempImagePreview(null)
+      setSearchResults([])
+      setScrapedData(null)
       setAiSuggestions(null)
       setError(null)
     }
@@ -185,6 +309,31 @@ export default function NewItemPage() {
           />
         )}
         
+        {step === 'searching' && (
+          <div className="flex flex-col items-center justify-center py-12">
+            <LoadingSpinner size="lg" />
+            <p className="mt-4 text-gray-600">Searching for matching products...</p>
+            <p className="mt-2 text-sm text-gray-500">This may take a few seconds</p>
+          </div>
+        )}
+        
+        {step === 'selecting' && (
+          <ImageSearchResults
+            results={searchResults}
+            onSelect={handleSearchResultSelect}
+            onSkip={handleSearchSkip}
+            error={error}
+          />
+        )}
+        
+        {step === 'scraping' && (
+          <div className="flex flex-col items-center justify-center py-12">
+            <LoadingSpinner size="lg" />
+            <p className="mt-4 text-gray-600">Extracting product information...</p>
+            <p className="mt-2 text-sm text-gray-500">This may take a few seconds</p>
+          </div>
+        )}
+        
         {step === 'analyzing' && (
           <div className="flex flex-col items-center justify-center py-12">
             <LoadingSpinner size="lg" />
@@ -195,18 +344,32 @@ export default function NewItemPage() {
         
         {step === 'form' && aiSuggestions && (
           <div className="space-y-4">
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-              <div className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <div>
-                  <h3 className="font-semibold text-blue-900 mb-1">AI Suggestions</h3>
-                  <p className="text-sm text-blue-800">
-                    We've analyzed your image and filled in some fields. Please review and adjust as needed.
-                  </p>
+            <div className={`border rounded-lg p-4 mb-6 ${
+              scrapedData 
+                ? 'bg-green-50 border-green-200' 
+                : 'bg-blue-50 border-blue-200'
+            }`}>
+                <div className="flex items-start gap-3">
+                  <svg className={`w-5 h-5 mt-0.5 ${
+                    scrapedData ? 'text-green-600' : 'text-blue-600'
+                  }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <h3 className={`font-semibold mb-1 ${
+                      scrapedData ? 'text-green-900' : 'text-blue-900'
+                    }`}>
+                      {scrapedData ? 'Product Information Found' : 'AI Suggestions'}
+                    </h3>
+                    <p className={`text-sm ${
+                      scrapedData ? 'text-green-800' : 'text-blue-800'
+                    }`}>
+                      {scrapedData
+                        ? 'We found product information from hallmark.com and combined it with AI analysis. Please review and adjust as needed.'
+                        : 'We\'ve analyzed your image and filled in some fields. Please review and adjust as needed.'}
+                    </p>
+                  </div>
                 </div>
-              </div>
             </div>
             
             {tempImagePreview && (
