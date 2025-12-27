@@ -32,8 +32,8 @@ export async function uploadItemImage(
     .eq('id', pathItemId)
     .single();
   const ownershipCheckResult = directCheck ? { 
-    owns: directCheck.collections?.user_id === user?.id,
-    collectionUserId: directCheck.collections?.user_id,
+    owns: directCheck.collections?.[0]?.user_id === user?.id,
+    collectionUserId: directCheck.collections?.[0]?.user_id,
     currentUserId: user?.id,
     itemId: directCheck.id,
     collectionId: directCheck.collection_id
@@ -60,7 +60,7 @@ export async function uploadItemImage(
     })
   
   // #region agent log
-  fetch('http://127.0.0.1:7243/ingest/a45f423f-dbfd-4a32-a0be-34181c1b8c4d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'upload.ts:18',message:'Storage upload result',data:{success:!error,errorMessage:error?.message,errorName:error?.name,errorStatusCode:error?.statusCode,uploadedPath:data?.path,fileName},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  fetch('http://127.0.0.1:7243/ingest/a45f423f-dbfd-4a32-a0be-34181c1b8c4d',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'upload.ts:18',message:'Storage upload result',data:{success:!error,errorMessage:error?.message,errorName:error?.name,uploadedPath:data?.path,fileName},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
   // #endregion
   
   if (error) throw error
