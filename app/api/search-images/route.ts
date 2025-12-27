@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
           const content = openaiData.choices[0]?.message?.content?.trim()
           if (content) {
             // Combine extracted terms with site restriction
-            const terms = content.split(/\s+/).filter(t => t.length > 0).slice(0, 4).join(' ')
+            const terms = content.split(/\s+/).filter((t: string) => t.length > 0).slice(0, 4).join(' ')
             if (terms) {
               searchQuery = `(site:hallmark.com OR site:hookedonhallmark.com OR site:www.ornamentmall.com) ${terms}`
             }
