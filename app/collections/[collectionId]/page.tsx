@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import Button from '@/components/ui/Button'
 import ItemGrid from '@/components/items/ItemGrid'
+import Breadcrumbs from '@/components/layout/Breadcrumbs'
 import type { Collection, Item } from '@/types/entities'
 
 interface CollectionPageProps {
@@ -41,6 +42,12 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
   
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <Breadcrumbs
+        items={[
+          { label: 'Collections', href: '/collections' },
+          { label: (collection as Collection).name }
+        ]}
+      />
       <div className="flex justify-between items-start mb-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">

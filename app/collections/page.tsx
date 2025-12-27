@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import CollectionList from '@/components/collections/CollectionList'
 import Link from 'next/link'
 import Button from '@/components/ui/Button'
+import Breadcrumbs from '@/components/layout/Breadcrumbs'
 import type { Collection } from '@/types/entities'
 
 export default async function CollectionsPage() {
@@ -25,6 +26,7 @@ export default async function CollectionsPage() {
   
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <Breadcrumbs items={[{ label: 'Collections' }]} />
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900">My Collections</h1>
         <Link href="/collections/new">

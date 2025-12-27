@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import CollectionForm from '@/components/collections/CollectionForm'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import Breadcrumbs from '@/components/layout/Breadcrumbs'
 import type { Collection } from '@/types/entities'
 
 export default function EditCollectionPage() {
@@ -75,6 +76,13 @@ export default function EditCollectionPage() {
   
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <Breadcrumbs
+        items={[
+          { label: 'Collections', href: '/collections' },
+          { label: collection.name, href: `/collections/${collectionId}` },
+          { label: 'Edit' }
+        ]}
+      />
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Edit Collection</h1>
       <CollectionForm
         collection={collection}

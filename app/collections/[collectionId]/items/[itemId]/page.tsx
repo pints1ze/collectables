@@ -3,7 +3,8 @@ import { createClient } from '@/lib/supabase/server'
 import Image from 'next/image'
 import Link from 'next/link'
 import Button from '@/components/ui/Button'
-import type { Item, ItemImage, Tag } from '@/types/entities'
+import Breadcrumbs from '@/components/layout/Breadcrumbs'
+import type { Item, ItemImage, Tag, Collection } from '@/types/entities'
 
 interface ItemPageProps {
   params: Promise<{ collectionId: string; itemId: string }>
@@ -18,15 +19,15 @@ export default async function ItemPage({ params }: ItemPageProps) {
     redirect('/sign-in')
   }
   
-  // Verify collection belongs to user
-  const { data: collection } = await supabase
+  // Verify collection belongs to user and fetch collection name
+  const { data: collection, error: collectionError } = await supabase
     .from('collections')
-    .select('id')
+    .select('*')
     .eq('id', collectionId)
     .eq('user_id', user.id)
     .single()
   
-  if (!collection) {
+  if (collectionError || !collection) {
     notFound()
   }
   
@@ -66,14 +67,13 @@ export default async function ItemPage({ params }: ItemPageProps) {
   
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="mb-6">
-        <Link
-          href={`/collections/${collectionId}`}
-          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-        >
-          ← Back to Collection
-        </Link>
-      </div>
+      <Breadcrumbs
+        items={[
+          { label: 'Collections', href: '/collections' },
+          { label: (collection as Collection).name, href: `/collections/${collectionId}` },
+          { label: (item as Item).title }
+        ]}
+      />
       
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">

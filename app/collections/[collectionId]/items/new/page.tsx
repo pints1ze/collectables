@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import ItemForm, { type ItemFormData } from '@/components/items/ItemForm'
@@ -8,9 +8,11 @@ import ItemImageCapture from '@/components/items/ItemImageCapture'
 import ImageSearchResults from '@/components/items/ImageSearchResults'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
 import Button from '@/components/ui/Button'
+import Breadcrumbs from '@/components/layout/Breadcrumbs'
 import { uploadItemImage } from '@/lib/storage/upload'
 import type { ImageAnalysisResult } from '@/app/api/analyze-image/route'
 import type { ImageSearchResult, ScrapedProductData } from '@/types/api'
+import type { Collection } from '@/types/entities'
 
 type Step = 'capture' | 'searching' | 'selecting' | 'scraping' | 'analyzing' | 'form' | 'success'
 
@@ -20,6 +22,7 @@ export default function NewItemPage() {
   const collectionId = params.collectionId as string
   const supabase = createClient()
   
+  const [collection, setCollection] = useState<Collection | null>(null)
   const [step, setStep] = useState<Step>('capture')
   const [tempImageFile, setTempImageFile] = useState<File | null>(null)
   const [tempImagePreview, setTempImagePreview] = useState<string | null>(null)
@@ -28,6 +31,32 @@ export default function NewItemPage() {
   const [aiSuggestions, setAiSuggestions] = useState<Partial<ItemFormData> | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [createdItemId, setCreatedItemId] = useState<string | null>(null)
+  
+  useEffect(() => {
+    async function fetchCollection() {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        router.push('/sign-in')
+        return
+      }
+      
+      const { data, error } = await supabase
+        .from('collections')
+        .select('*')
+        .eq('id', collectionId)
+        .eq('user_id', user.id)
+        .single()
+      
+      if (error || !data) {
+        router.push('/collections')
+        return
+      }
+      
+      setCollection(data as Collection)
+    }
+    
+    fetchCollection()
+  }, [collectionId, router, supabase])
   
   const handleImageCaptured = async (file: File, preview: string) => {
     try {
@@ -320,6 +349,15 @@ export default function NewItemPage() {
   
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {collection && (
+        <Breadcrumbs
+          items={[
+            { label: 'Collections', href: '/collections' },
+            { label: collection.name, href: `/collections/${collectionId}` },
+            { label: 'New Item' }
+          ]}
+        />
+      )}
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Add New Item</h1>
       
       <div className="bg-white rounded-lg border border-gray-200 p-6">

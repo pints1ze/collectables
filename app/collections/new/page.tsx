@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import CollectionForm from '@/components/collections/CollectionForm'
+import Breadcrumbs from '@/components/layout/Breadcrumbs'
 
 export default function NewCollectionPage() {
   const router = useRouter()
@@ -33,6 +34,12 @@ export default function NewCollectionPage() {
   
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <Breadcrumbs
+        items={[
+          { label: 'Collections', href: '/collections' },
+          { label: 'New Collection' }
+        ]}
+      />
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Create New Collection</h1>
       <CollectionForm onSubmit={handleSubmit} />
     </div>

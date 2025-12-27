@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import ItemForm, { type ItemFormData } from '@/components/items/ItemForm'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
-import type { Item } from '@/types/entities'
+import Breadcrumbs from '@/components/layout/Breadcrumbs'
+import type { Item, Collection } from '@/types/entities'
 
 export default function EditItemPage() {
   const router = useRouter()
@@ -14,32 +15,48 @@ export default function EditItemPage() {
   const itemId = params.itemId as string
   const supabase = createClient()
   const [item, setItem] = useState<Item | null>(null)
+  const [collection, setCollection] = useState<Collection | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   
   useEffect(() => {
-    async function fetchItem() {
+    async function fetchData() {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) {
         router.push('/sign-in')
         return
       }
       
-      const { data, error } = await supabase
+      // Fetch item
+      const { data: itemData, error: itemError } = await supabase
         .from('items')
         .select('*')
         .eq('id', itemId)
         .single()
       
-      if (error || !data) {
+      if (itemError || !itemData) {
         router.push(`/collections/${collectionId}`)
         return
       }
       
-      setItem(data as Item)
+      // Fetch collection
+      const { data: collectionData, error: collectionError } = await supabase
+        .from('collections')
+        .select('*')
+        .eq('id', collectionId)
+        .eq('user_id', user.id)
+        .single()
+      
+      if (collectionError || !collectionData) {
+        router.push('/collections')
+        return
+      }
+      
+      setItem(itemData as Item)
+      setCollection(collectionData as Collection)
       setIsLoading(false)
     }
     
-    fetchItem()
+    fetchData()
   }, [itemId, collectionId, router, supabase])
   
   const handleSubmit = async (data: ItemFormData) => {
@@ -121,12 +138,20 @@ export default function EditItemPage() {
     )
   }
   
-  if (!item) {
+  if (!item || !collection) {
     return null
   }
   
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <Breadcrumbs
+        items={[
+          { label: 'Collections', href: '/collections' },
+          { label: collection.name, href: `/collections/${collectionId}` },
+          { label: item.title, href: `/collections/${collectionId}/items/${itemId}` },
+          { label: 'Edit' }
+        ]}
+      />
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Edit Item</h1>
       <div className="bg-white rounded-lg border border-gray-200 p-6">
         <ItemForm
