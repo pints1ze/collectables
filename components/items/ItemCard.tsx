@@ -33,12 +33,6 @@ export default function ItemCard({ item, collectionId, imageUrl }: ItemCardProps
         <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">
           {item.title}
         </h3>
-        {item.brand && (
-          <p className="text-sm text-gray-600 mb-1">{item.brand}</p>
-        )}
-        {item.year_released && (
-          <p className="text-xs text-gray-500">{item.year_released}</p>
-        )}
       </div>
     </Link>
   )

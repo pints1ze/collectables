@@ -106,56 +106,6 @@ export default async function ItemPage({ params }: ItemPageProps) {
               </p>
             )}
             
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              {(item as Item).brand && (
-                <div>
-                  <span className="font-medium text-gray-500">Brand:</span>
-                  <p className="text-gray-900">{(item as Item).brand}</p>
-                </div>
-              )}
-              
-              {(item as Item).series_name && (
-                <div>
-                  <span className="font-medium text-gray-500">Series:</span>
-                  <p className="text-gray-900">{(item as Item).series_name}</p>
-                </div>
-              )}
-              
-              {(item as Item).year_released && (
-                <div>
-                  <span className="font-medium text-gray-500">Year Released:</span>
-                  <p className="text-gray-900">{(item as Item).year_released}</p>
-                </div>
-              )}
-              
-              {(item as Item).year_acquired && (
-                <div>
-                  <span className="font-medium text-gray-500">Year Acquired:</span>
-                  <p className="text-gray-900">{(item as Item).year_acquired}</p>
-                </div>
-              )}
-              
-              {(item as Item).sku && (
-                <div>
-                  <span className="font-medium text-gray-500">SKU:</span>
-                  <p className="text-gray-900">{(item as Item).sku}</p>
-                </div>
-              )}
-              
-              {(item as Item).condition && (
-                <div>
-                  <span className="font-medium text-gray-500">Condition:</span>
-                  <p className="text-gray-900">{(item as Item).condition}</p>
-                </div>
-              )}
-              
-              {(item as Item).location && (
-                <div>
-                  <span className="font-medium text-gray-500">Location:</span>
-                  <p className="text-gray-900">{(item as Item).location}</p>
-                </div>
-              )}
-            </div>
             
             {tags && tags.length > 0 && (
               <div>

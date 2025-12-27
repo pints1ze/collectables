@@ -3,10 +3,6 @@ import { NextRequest, NextResponse } from 'next/server'
 export interface ImageAnalysisResult {
   title: string
   description: string | null
-  brand: string | null
-  series_name: string | null
-  year_released: number | null
-  condition: string | null
   tags: string[]
 }
 
@@ -35,10 +31,6 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         title: 'Collectible Item',
         description: 'A collectible item from your collection',
-        brand: null,
-        series_name: null,
-        year_released: null,
-        condition: null,
         tags: [],
       } as ImageAnalysisResult)
     }
@@ -62,10 +54,6 @@ export async function POST(request: NextRequest) {
 {
   "title": "A descriptive title for the item",
   "description": "A detailed description of the item, or null if not clear",
-  "brand": "The brand or manufacturer name, or null if not visible",
-  "series_name": "The series or collection name, or null if not visible",
-  "year_released": "The year the item was released (as a number), or null if not visible",
-  "condition": "The condition of the item (e.g., Mint, Near Mint, Good, Fair, Poor), or null if not clear",
   "tags": ["Array of relevant tags/categories", "e.g., trading cards, action figures, etc."]
 }
 
@@ -110,10 +98,6 @@ Be specific and accurate. Only include information that is clearly visible in th
       analysisResult = {
         title: 'Collectible Item',
         description: content.substring(0, 200),
-        brand: null,
-        series_name: null,
-        year_released: null,
-        condition: null,
         tags: [],
       }
     }

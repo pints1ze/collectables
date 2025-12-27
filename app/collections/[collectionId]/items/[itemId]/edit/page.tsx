@@ -66,13 +66,6 @@ export default function EditItemPage() {
       .update({
         title: data.title,
         description: data.description,
-        brand: data.brand,
-        series_name: data.series_name,
-        year_released: data.year_released,
-        year_acquired: data.year_acquired,
-        sku: data.sku,
-        condition: data.condition,
-        location: data.location,
         notes: data.notes,
         primary_image_id: data.primaryImageId,
       })

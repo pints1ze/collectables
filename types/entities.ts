@@ -21,13 +21,6 @@ export interface Item {
   primary_image_id: string | null
   title: string
   description: string | null
-  brand: string | null
-  series_name: string | null
-  year_released: number | null
-  year_acquired: number | null
-  sku: string | null
-  condition: string | null
-  location: string | null
   notes: string | null
   identified_source_url: string | null
   identified_provider: string | null

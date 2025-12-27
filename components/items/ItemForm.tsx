@@ -21,13 +21,6 @@ interface ItemFormProps {
 export interface ItemFormData {
   title: string
   description: string | null
-  brand: string | null
-  series_name: string | null
-  year_released: number | null
-  year_acquired: number | null
-  sku: string | null
-  condition: string | null
-  location: string | null
   notes: string | null
   tagIds: string[]
   primaryImageId: string | null
@@ -37,13 +30,6 @@ export default function ItemForm({ item, collectionId, onSubmit, onCancel, initi
   const supabase = createClient()
   const [title, setTitle] = useState(item?.title || initialData?.title || '')
   const [description, setDescription] = useState(item?.description || initialData?.description || '')
-  const [brand, setBrand] = useState(item?.brand || initialData?.brand || '')
-  const [seriesName, setSeriesName] = useState(item?.series_name || initialData?.series_name || '')
-  const [yearReleased, setYearReleased] = useState(item?.year_released?.toString() || initialData?.year_released?.toString() || '')
-  const [yearAcquired, setYearAcquired] = useState(item?.year_acquired?.toString() || initialData?.year_acquired?.toString() || '')
-  const [sku, setSku] = useState(item?.sku || initialData?.sku || '')
-  const [condition, setCondition] = useState(item?.condition || initialData?.condition || '')
-  const [location, setLocation] = useState(item?.location || initialData?.location || '')
   const [notes, setNotes] = useState(item?.notes || initialData?.notes || '')
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>(initialData?.tagIds || [])
   const [existingImages, setExistingImages] = useState<ItemImage[]>([])
@@ -100,13 +86,6 @@ export default function ItemForm({ item, collectionId, onSubmit, onCancel, initi
       await onSubmit({
         title: title.trim(),
         description: description.trim() || null,
-        brand: brand.trim() || null,
-        series_name: seriesName.trim() || null,
-        year_released: yearReleased ? parseInt(yearReleased) : null,
-        year_acquired: yearAcquired ? parseInt(yearAcquired) : null,
-        sku: sku.trim() || null,
-        condition: condition.trim() || null,
-        location: location.trim() || null,
         notes: notes.trim() || null,
         tagIds: selectedTagIds,
         primaryImageId,
@@ -195,69 +174,6 @@ export default function ItemForm({ item, collectionId, onSubmit, onCancel, initi
         onChange={(e) => setDescription(e.target.value)}
         disabled={isLoading}
         rows={4}
-      />
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Input
-          label="Brand"
-          value={brand}
-          onChange={(e) => setBrand(e.target.value)}
-          disabled={isLoading}
-        />
-        
-        <Input
-          label="Series Name"
-          value={seriesName}
-          onChange={(e) => setSeriesName(e.target.value)}
-          disabled={isLoading}
-        />
-      </div>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Input
-          label="Year Released"
-          type="number"
-          value={yearReleased}
-          onChange={(e) => setYearReleased(e.target.value)}
-          disabled={isLoading}
-          min="1000"
-          max="2100"
-        />
-        
-        <Input
-          label="Year Acquired"
-          type="number"
-          value={yearAcquired}
-          onChange={(e) => setYearAcquired(e.target.value)}
-          disabled={isLoading}
-          min="1000"
-          max="2100"
-        />
-      </div>
-      
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Input
-          label="SKU / Card Number"
-          value={sku}
-          onChange={(e) => setSku(e.target.value)}
-          disabled={isLoading}
-        />
-        
-        <Input
-          label="Condition"
-          value={condition}
-          onChange={(e) => setCondition(e.target.value)}
-          disabled={isLoading}
-          placeholder="e.g., Mint, Good, Fair"
-        />
-      </div>
-      
-      <Input
-        label="Location"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
-        disabled={isLoading}
-        placeholder="Where is this item stored?"
       />
       
       <Textarea

@@ -212,11 +212,6 @@ export default function NewItemPage() {
     return {
       title: scraped?.title ?? ai.title ?? '',
       description: scraped?.description ?? ai.description ?? null,
-      brand: scraped?.brand ?? ai.brand ?? null,
-      series_name: scraped?.series_name ?? ai.series_name ?? null,
-      year_released: scraped?.year_released ?? ai.year_released ?? null,
-      sku: scraped?.sku ?? null, // SKU from scraped data (AI doesn't provide this)
-      condition: ai.condition ?? null, // Condition not scraped
       tagIds: [], // Tags will be handled separately if needed
       primaryImageId: null, // Will be set after item creation
     }
@@ -240,13 +235,6 @@ export default function NewItemPage() {
         collection_id: collectionId,
         title: data.title,
         description: data.description,
-        brand: data.brand,
-        series_name: data.series_name,
-        year_released: data.year_released,
-        year_acquired: data.year_acquired,
-        sku: data.sku,
-        condition: data.condition,
-        location: data.location,
         notes: data.notes,
         primary_image_id: null, // Will be set after image is uploaded
       })
