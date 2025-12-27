@@ -15,6 +15,7 @@ interface ItemFormProps {
   collectionId: string
   onSubmit: (data: ItemFormData) => Promise<void>
   onCancel?: () => void
+  initialData?: Partial<ItemFormData>
 }
 
 export interface ItemFormData {
@@ -32,21 +33,21 @@ export interface ItemFormData {
   primaryImageId: string | null
 }
 
-export default function ItemForm({ item, collectionId, onSubmit, onCancel }: ItemFormProps) {
+export default function ItemForm({ item, collectionId, onSubmit, onCancel, initialData }: ItemFormProps) {
   const supabase = createClient()
-  const [title, setTitle] = useState(item?.title || '')
-  const [description, setDescription] = useState(item?.description || '')
-  const [brand, setBrand] = useState(item?.brand || '')
-  const [seriesName, setSeriesName] = useState(item?.series_name || '')
-  const [yearReleased, setYearReleased] = useState(item?.year_released?.toString() || '')
-  const [yearAcquired, setYearAcquired] = useState(item?.year_acquired?.toString() || '')
-  const [sku, setSku] = useState(item?.sku || '')
-  const [condition, setCondition] = useState(item?.condition || '')
-  const [location, setLocation] = useState(item?.location || '')
-  const [notes, setNotes] = useState(item?.notes || '')
-  const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
+  const [title, setTitle] = useState(item?.title || initialData?.title || '')
+  const [description, setDescription] = useState(item?.description || initialData?.description || '')
+  const [brand, setBrand] = useState(item?.brand || initialData?.brand || '')
+  const [seriesName, setSeriesName] = useState(item?.series_name || initialData?.series_name || '')
+  const [yearReleased, setYearReleased] = useState(item?.year_released?.toString() || initialData?.year_released?.toString() || '')
+  const [yearAcquired, setYearAcquired] = useState(item?.year_acquired?.toString() || initialData?.year_acquired?.toString() || '')
+  const [sku, setSku] = useState(item?.sku || initialData?.sku || '')
+  const [condition, setCondition] = useState(item?.condition || initialData?.condition || '')
+  const [location, setLocation] = useState(item?.location || initialData?.location || '')
+  const [notes, setNotes] = useState(item?.notes || initialData?.notes || '')
+  const [selectedTagIds, setSelectedTagIds] = useState<string[]>(initialData?.tagIds || [])
   const [existingImages, setExistingImages] = useState<ItemImage[]>([])
-  const [primaryImageId, setPrimaryImageId] = useState<string | null>(item?.primary_image_id || null)
+  const [primaryImageId, setPrimaryImageId] = useState<string | null>(item?.primary_image_id || initialData?.primaryImageId || null)
   const [userId, setUserId] = useState<string>('')
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -275,13 +276,16 @@ export default function ItemForm({ item, collectionId, onSubmit, onCancel }: Ite
         />
       )}
       
-      <ItemImageUpload
-        itemId={item?.id}
-        onUploadComplete={handleImageUpload}
-        existingImages={existingImages}
-        onSetPrimary={item ? handleSetPrimary : undefined}
-        onDelete={item ? handleDeleteImage : undefined}
-      />
+      {/* Only show image upload for existing items */}
+      {item && (
+        <ItemImageUpload
+          itemId={item.id}
+          onUploadComplete={handleImageUpload}
+          existingImages={existingImages}
+          onSetPrimary={handleSetPrimary}
+          onDelete={handleDeleteImage}
+        />
+      )}
       
       <div className="flex gap-4">
         <Button

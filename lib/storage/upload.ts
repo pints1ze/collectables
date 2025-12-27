@@ -72,4 +72,8 @@ export async function uploadItemImage(
   return publicUrl
 }
 
+// Note: We don't upload temporary images to storage anymore.
+// Instead, we keep the image in memory until the item is created,
+// then upload it directly to the item's location.
+
 
