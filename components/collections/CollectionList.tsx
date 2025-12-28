@@ -9,8 +9,8 @@ export default function CollectionList({ collections }: CollectionListProps) {
   if (collections.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500 mb-4">No collections yet.</p>
-        <p className="text-sm text-gray-400">Create your first collection to get started!</p>
+        <p className="text-muted-foreground mb-4">No collections yet.</p>
+        <p className="text-sm text-muted-foreground/70">Create your first collection to get started!</p>
       </div>
     )
   }

@@ -1,3 +1,6 @@
+import { Loader2 } from 'lucide-react'
+import { cn } from '@/lib/utils/cn'
+
 interface LoadingSpinnerProps {
   size?: 'sm' | 'md' | 'lg'
   className?: string
@@ -11,9 +14,7 @@ export default function LoadingSpinner({ size = 'md', className = '' }: LoadingS
   }
   
   return (
-    <div className={`inline-block ${sizeStyles[size]} ${className}`}>
-      <div className="animate-spin rounded-full border-4 border-gray-200 border-t-blue-600"></div>
-    </div>
+    <Loader2 className={cn('animate-spin text-primary', sizeStyles[size], className)} />
   )
 }
 

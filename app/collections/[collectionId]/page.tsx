@@ -50,11 +50,11 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
       />
       <div className="flex justify-between items-start mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
             {(collection as Collection).name}
           </h1>
           {(collection as Collection).description && (
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               {(collection as Collection).description}
             </p>
           )}

@@ -12,13 +12,13 @@ export default async function HomePage() {
   }
   
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="max-w-2xl w-full text-center space-y-8">
         <div>
-          <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+          <h1 className="text-4xl font-extrabold text-foreground sm:text-5xl md:text-6xl">
             Collectables
           </h1>
-          <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl">
+          <p className="mt-3 text-base text-muted-foreground sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl">
             Catalog your physical collectible items with ease. Take photos, organize by collections, and manage your treasures.
           </p>
         </div>

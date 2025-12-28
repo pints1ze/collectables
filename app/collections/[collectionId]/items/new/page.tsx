@@ -346,11 +346,11 @@ export default function NewItemPage() {
           ]}
         />
       )}
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Add New Item</h1>
+      <h1 className="text-3xl font-bold text-foreground mb-8">Add New Item</h1>
       
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <div className="bg-card rounded-lg border border-border p-6">
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg mb-6">
             {error}
           </div>
         )}
@@ -365,8 +365,8 @@ export default function NewItemPage() {
         {step === 'searching' && (
           <div className="flex flex-col items-center justify-center py-12">
             <LoadingSpinner size="lg" />
-            <p className="mt-4 text-gray-600">Searching for matching products...</p>
-            <p className="mt-2 text-sm text-gray-500">This may take a few seconds</p>
+            <p className="mt-4 text-muted-foreground">Searching for matching products...</p>
+            <p className="mt-2 text-sm text-muted-foreground/70">This may take a few seconds</p>
           </div>
         )}
         
@@ -382,41 +382,31 @@ export default function NewItemPage() {
         {step === 'scraping' && (
           <div className="flex flex-col items-center justify-center py-12">
             <LoadingSpinner size="lg" />
-            <p className="mt-4 text-gray-600">Extracting product information...</p>
-            <p className="mt-2 text-sm text-gray-500">This may take a few seconds</p>
+            <p className="mt-4 text-muted-foreground">Extracting product information...</p>
+            <p className="mt-2 text-sm text-muted-foreground/70">This may take a few seconds</p>
           </div>
         )}
         
         {step === 'analyzing' && (
           <div className="flex flex-col items-center justify-center py-12">
             <LoadingSpinner size="lg" />
-            <p className="mt-4 text-gray-600">Analyzing image with AI...</p>
-            <p className="mt-2 text-sm text-gray-500">This may take a few seconds</p>
+            <p className="mt-4 text-muted-foreground">Analyzing image with AI...</p>
+            <p className="mt-2 text-sm text-muted-foreground/70">This may take a few seconds</p>
           </div>
         )}
         
         {step === 'form' && aiSuggestions && (
           <div className="space-y-4">
-            <div className={`border rounded-lg p-4 mb-6 ${
-              scrapedData 
-                ? 'bg-green-50 border-green-200' 
-                : 'bg-blue-50 border-blue-200'
-            }`}>
+            <div className="border border-primary/20 rounded-lg p-4 mb-6 bg-primary/10">
                 <div className="flex items-start gap-3">
-                  <svg className={`w-5 h-5 mt-0.5 ${
-                    scrapedData ? 'text-green-600' : 'text-blue-600'
-                  }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 mt-0.5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <div>
-                    <h3 className={`font-semibold mb-1 ${
-                      scrapedData ? 'text-green-900' : 'text-blue-900'
-                    }`}>
+                    <h3 className="font-semibold mb-1 text-foreground">
                       {scrapedData ? 'Product Information Found' : 'AI Suggestions'}
                     </h3>
-                    <p className={`text-sm ${
-                      scrapedData ? 'text-green-800' : 'text-blue-800'
-                    }`}>
+                    <p className="text-sm text-muted-foreground">
                       {scrapedData
                         ? 'We found product information from hallmark.com and combined it with AI analysis. Please review and adjust as needed.'
                         : 'We\'ve analyzed your image and filled in some fields. Please review and adjust as needed.'}
@@ -427,10 +417,10 @@ export default function NewItemPage() {
             
             {tempImagePreview && (
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Preview Image
                 </label>
-                <div className="relative w-full aspect-square max-w-xs rounded-lg overflow-hidden border border-gray-200">
+                <div className="relative w-full aspect-square max-w-xs rounded-lg overflow-hidden border border-border">
                   <img
                     src={tempImagePreview}
                     alt="Preview"

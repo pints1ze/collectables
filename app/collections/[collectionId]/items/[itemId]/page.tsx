@@ -74,10 +74,10 @@ export default async function ItemPage({ params }: ItemPageProps) {
         ]}
       />
       
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-card rounded-lg border border-border overflow-hidden">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
           {primaryImage && (
-            <div className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
+            <div className="relative aspect-square bg-muted rounded-lg overflow-hidden">
               <Image
                 src={primaryImage.image_url}
                 alt={(item as Item).title}
@@ -90,7 +90,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
           
           <div className="space-y-4">
             <div className="flex justify-between items-start">
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-card-foreground">
                 {(item as Item).title}
               </h1>
               <ItemActions
@@ -101,7 +101,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
             </div>
             
             {(item as Item).description && (
-              <p className="text-gray-700">
+              <p className="text-muted-foreground">
                 {(item as Item).description}
               </p>
             )}
@@ -109,12 +109,12 @@ export default async function ItemPage({ params }: ItemPageProps) {
             
             {tags && tags.length > 0 && (
               <div>
-                <span className="font-medium text-gray-500 text-sm mb-2 block">Tags:</span>
+                <span className="font-medium text-muted-foreground text-sm mb-2 block">Tags:</span>
                 <div className="flex flex-wrap gap-2">
                   {(tags as Tag[]).map((tag) => (
                     <span
                       key={tag.id}
-                      className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                      className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
                     >
                       {tag.name}
                     </span>
@@ -125,8 +125,8 @@ export default async function ItemPage({ params }: ItemPageProps) {
             
             {(item as Item).notes && (
               <div>
-                <span className="font-medium text-gray-500 text-sm mb-2 block">Notes:</span>
-                <p className="text-gray-700 whitespace-pre-wrap">
+                <span className="font-medium text-muted-foreground text-sm mb-2 block">Notes:</span>
+                <p className="text-foreground whitespace-pre-wrap">
                   {(item as Item).notes}
                 </p>
               </div>
@@ -135,11 +135,11 @@ export default async function ItemPage({ params }: ItemPageProps) {
         </div>
         
         {images && images.length > 1 && (
-          <div className="border-t border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Additional Images</h2>
+          <div className="border-t border-border p-6">
+            <h2 className="text-lg font-semibold text-card-foreground mb-4">Additional Images</h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               {images.map((img) => (
-                <div key={img.id} className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                <div key={img.id} className="relative aspect-square bg-muted rounded-lg overflow-hidden">
                   <Image
                     src={(img as ItemImage).image_url}
                     alt={(item as Item).title}

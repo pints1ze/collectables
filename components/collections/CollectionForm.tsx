@@ -5,6 +5,7 @@ import Input from '@/components/ui/Input'
 import Textarea from '@/components/ui/Textarea'
 import Button from '@/components/ui/Button'
 import LoadingSpinner from '@/components/ui/LoadingSpinner'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import type { Collection } from '@/types/entities'
 
 interface CollectionFormProps {
@@ -43,9 +44,9 @@ export default function CollectionForm({ collection, onSubmit, onCancel }: Colle
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
-          {error}
-        </div>
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
       
       <Input

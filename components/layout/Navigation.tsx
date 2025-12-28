@@ -11,16 +11,16 @@ export default function Navigation() {
   ]
   
   return (
-    <nav className="bg-white border-t border-gray-200 fixed bottom-0 left-0 right-0 z-50 md:hidden">
+    <nav className="bg-background border-t border-border fixed bottom-0 left-0 right-0 z-50 md:hidden">
       <div className="flex justify-around items-center h-16">
         {navItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className={`flex-1 text-center py-2 text-sm font-medium ${
+            className={`flex-1 text-center py-2 text-sm font-medium transition-colors ${
               pathname === item.href
-                ? 'text-blue-600 border-t-2 border-blue-600'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'text-primary border-t-2 border-primary'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             {item.label}

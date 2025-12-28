@@ -10,8 +10,8 @@ export default async function ItemGrid({ items, collectionId }: ItemGridProps) {
   if (items.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-gray-500 mb-4">No items in this collection yet.</p>
-        <p className="text-sm text-gray-400">Add your first item to get started!</p>
+        <p className="text-muted-foreground mb-4">No items in this collection yet.</p>
+        <p className="text-sm text-muted-foreground/70">Add your first item to get started!</p>
       </div>
     )
   }

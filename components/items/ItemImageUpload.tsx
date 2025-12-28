@@ -157,7 +157,7 @@ export default function ItemImageUpload({
                 {!img.is_primary && onSetPrimary && (
                   <button
                     onClick={() => onSetPrimary(img.id)}
-                    className="bg-blue-600 text-white text-xs px-2 py-1 rounded hover:bg-blue-700"
+                    className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded hover:bg-primary/90 border border-primary/20 shadow-sm cursor-pointer"
                   >
                     Set Primary
                   </button>
@@ -165,7 +165,7 @@ export default function ItemImageUpload({
                 {onDelete && (
                   <button
                     onClick={() => onDelete(img.id)}
-                    className="bg-red-600 text-white text-xs px-2 py-1 rounded hover:bg-red-700"
+                    className="bg-destructive text-destructive-foreground text-xs px-2 py-1 rounded hover:bg-destructive/90 border border-destructive/20 shadow-sm cursor-pointer"
                   >
                     Delete
                   </button>

@@ -145,8 +145,8 @@ export default function EditItemPage() {
           { label: 'Edit' }
         ]}
       />
-      <h1 className="text-3xl font-bold text-gray-900 mb-8">Edit Item</h1>
-      <div className="bg-white rounded-lg border border-gray-200 p-6">
+      <h1 className="text-3xl font-bold text-foreground mb-8">Edit Item</h1>
+      <div className="bg-card rounded-lg border border-border p-6">
         <ItemForm
           item={item}
           collectionId={collectionId}

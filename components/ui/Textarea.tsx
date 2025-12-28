@@ -1,4 +1,23 @@
 import { TextareaHTMLAttributes, forwardRef } from 'react'
+import * as React from 'react'
+import { Label } from './label'
+import { cn } from '@/lib/utils/cn'
+
+const ShadcnTextarea = React.forwardRef<HTMLTextAreaElement, React.ComponentProps<'textarea'>>(
+  ({ className, ...props }, ref) => {
+    return (
+      <textarea
+        className={cn(
+          'flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+          className
+        )}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+ShadcnTextarea.displayName = 'Textarea'
 
 interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string
@@ -10,22 +29,23 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     const textareaId = id || `textarea-${Math.random().toString(36).substr(2, 9)}`
     
     return (
-      <div className="w-full">
+      <div className="w-full space-y-2">
         {label && (
-          <label htmlFor={textareaId} className="block text-sm font-medium text-gray-700 mb-1">
+          <Label htmlFor={textareaId} className="text-foreground">
             {label}
-          </label>
+          </Label>
         )}
-        <textarea
+        <ShadcnTextarea
           ref={ref}
           id={textareaId}
-          className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-vertical ${
-            error ? 'border-red-500' : 'border-gray-300'
-          } ${className}`}
+          className={cn(
+            error && 'border-destructive focus-visible:ring-destructive',
+            className
+          )}
           {...props}
         />
         {error && (
-          <p className="mt-1 text-sm text-red-600">{error}</p>
+          <p className="text-sm text-destructive">{error}</p>
         )}
       </div>
     )
@@ -35,5 +55,3 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
 Textarea.displayName = 'Textarea'
 
 export default Textarea
-
-

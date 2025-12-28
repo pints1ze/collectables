@@ -1,4 +1,34 @@
 import { ButtonHTMLAttributes, forwardRef } from 'react'
+import * as React from 'react'
+import { Slot } from '@radix-ui/react-slot'
+import { cva, type VariantProps } from 'class-variance-authority'
+import { cn } from '@/lib/utils/cn'
+
+const buttonVariants = cva(
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+  {
+    variants: {
+      variant: {
+        default: 'bg-primary text-primary-foreground hover:bg-primary/90 border border-primary/20 shadow-sm',
+        destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90 border border-destructive/20 shadow-sm',
+        outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm',
+        secondary: 'bg-secondary text-secondary-foreground hover:bg-secondary/80 border border-border shadow-sm',
+        ghost: 'hover:bg-accent hover:text-accent-foreground border border-transparent hover:border-border',
+        link: 'text-primary underline-offset-4 hover:underline border-0 shadow-none',
+      },
+      size: {
+        default: 'h-10 px-4 py-2',
+        sm: 'h-9 rounded-md px-3',
+        lg: 'h-11 rounded-md px-8',
+        icon: 'h-10 w-10',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+      size: 'default',
+    },
+  }
+)
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'danger' | 'ghost'
@@ -7,25 +37,25 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = '', variant = 'primary', size = 'md', children, ...props }, ref) => {
-    const baseStyles = 'font-medium rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
-    
-    const variantStyles = {
-      primary: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500',
-      secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500',
-      danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500',
-      ghost: 'bg-transparent text-gray-700 hover:bg-gray-100 focus:ring-gray-500',
+    // Map existing variants to shadcn variants
+    const variantMap: Record<string, VariantProps<typeof buttonVariants>['variant']> = {
+      primary: 'default',
+      secondary: 'secondary',
+      danger: 'destructive',
+      ghost: 'ghost',
     }
     
-    const sizeStyles = {
-      sm: 'px-3 py-1.5 text-sm',
-      md: 'px-4 py-2 text-base',
-      lg: 'px-6 py-3 text-lg',
+    // Map existing sizes to shadcn sizes
+    const sizeMap: Record<string, VariantProps<typeof buttonVariants>['size']> = {
+      sm: 'sm',
+      md: 'default',
+      lg: 'lg',
     }
     
     return (
       <button
         ref={ref}
-        className={`${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${className}`}
+        className={cn(buttonVariants({ variant: variantMap[variant], size: sizeMap[size] }), className)}
         {...props}
       >
         {children}
@@ -37,5 +67,3 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = 'Button'
 
 export default Button
-
-
