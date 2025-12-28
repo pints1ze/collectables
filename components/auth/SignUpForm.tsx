@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, FormEvent } from 'react'
+import { useState, FormEvent, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { getAuthCallbackUrl } from '@/lib/utils/url'
@@ -16,6 +16,18 @@ export default function SignUpForm() {
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [redirectUrl, setRedirectUrl] = useState<string | null>(null)
+  
+  // Get the redirect URL on mount to ensure we have the correct domain
+  useEffect(() => {
+    // If NEXT_PUBLIC_APP_URL is set, use it directly (most reliable)
+    if (process.env.NEXT_PUBLIC_APP_URL) {
+      setRedirectUrl(`${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`)
+    } else {
+      // Otherwise use the utility function (will use window.location.origin)
+      setRedirectUrl(getAuthCallbackUrl())
+    }
+  }, [])
   
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -33,12 +45,15 @@ export default function SignUpForm() {
     
     setIsLoading(true)
     
+    // Use the redirect URL we determined, or fallback to the utility function
+    const callbackUrl = redirectUrl || getAuthCallbackUrl()
+    
     const supabase = createClient()
     const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: getAuthCallbackUrl(),
+        emailRedirectTo: callbackUrl,
       },
     })
     

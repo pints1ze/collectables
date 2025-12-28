@@ -42,7 +42,27 @@ Before deploying, make sure you have:
    - **Output Directory**: `.next` (auto-detected)
    - **Install Command**: `npm install` (auto-detected)
 
-## Step 3: Configure Environment Variables
+## Step 3: Configure Supabase Redirect URLs
+
+Before deploying, you need to configure allowed redirect URLs in your Supabase project:
+
+1. **Go to Supabase Dashboard**:
+   - Navigate to your project
+   - Go to **Authentication** → **URL Configuration**
+
+2. **Add Redirect URLs**:
+   Add the following URLs to the **Redirect URLs** list:
+   - `http://localhost:3000/auth/callback` (for local development)
+   - `https://your-app.vercel.app/auth/callback` (replace with your Vercel URL)
+   - `https://yourdomain.com/auth/callback` (if using a custom domain)
+
+3. **Set Site URL** (optional but recommended):
+   - Set the **Site URL** to your production domain (e.g., `https://your-app.vercel.app`)
+   - This is used as a fallback if redirect URLs aren't properly configured
+
+**Important**: Without these redirect URLs configured, email confirmation links may not work correctly.
+
+## Step 4: Configure Environment Variables
 
 In the Vercel project settings, add the following environment variables:
 
@@ -64,16 +84,22 @@ In the Vercel project settings, add the following environment variables:
 
 ### Optional Environment Variables
 
-4. **OPENAI_API_KEY** (Optional - for AI image analysis)
+4. **NEXT_PUBLIC_APP_URL** (Recommended - for email confirmation links)
+   - Value: Your production domain URL
+   - Example: `https://your-app.vercel.app` or `https://yourdomain.com`
+   - **Important**: This ensures email confirmation links use the correct domain
+   - If not set, the app will use `window.location.origin` (works but less reliable in production)
+
+5. **OPENAI_API_KEY** (Optional - for AI image analysis)
    - Value: Your OpenAI API key
    - Found in: [OpenAI Platform](https://platform.openai.com/api-keys)
    - If not set, the app will work but image analysis will return mock data
 
-5. **GOOGLE_CUSTOM_SEARCH_API_KEY** (Optional - for image search)
+6. **GOOGLE_CUSTOM_SEARCH_API_KEY** (Optional - for image search)
    - Value: Your Google Custom Search API key
    - Found in: [Google Cloud Console](https://console.cloud.google.com/)
 
-6. **GOOGLE_CUSTOM_SEARCH_ENGINE_ID** (Optional - for image search)
+7. **GOOGLE_CUSTOM_SEARCH_ENGINE_ID** (Optional - for image search)
    - Value: Your Custom Search Engine ID
    - Found in: [Google Programmable Search Engine](https://programmablesearchengine.google.com/)
 
@@ -89,7 +115,7 @@ In the Vercel project settings, add the following environment variables:
 5. Click **Save**
 6. Repeat for all environment variables
 
-## Step 4: Deploy
+## Step 5: Deploy
 
 1. **Click "Deploy"** in the Vercel dashboard
 2. Vercel will:
@@ -101,7 +127,7 @@ In the Vercel project settings, add the following environment variables:
    - You'll see build logs in real-time
    - If there are errors, check the build logs
 
-## Step 5: Verify Deployment
+## Step 6: Verify Deployment
 
 1. **Check the deployment URL**:
    - Vercel will provide a URL like: `https://your-app-name.vercel.app`
@@ -114,7 +140,7 @@ In the Vercel project settings, add the following environment variables:
    - Add an item with an image
    - Verify everything works
 
-## Step 6: Configure Custom Domain (Optional)
+## Step 7: Configure Custom Domain (Optional)
 
 1. In Vercel project settings, go to **Settings** → **Domains**
 2. Add your custom domain (e.g., `collectables.yourdomain.com`)
