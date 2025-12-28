@@ -114,7 +114,7 @@ export default async function ItemPage({ params }: ItemPageProps) {
                   {(tags as Tag[]).map((tag) => (
                     <span
                       key={tag.id}
-                      className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm"
+                      className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-sm border border-border shadow-sm"
                     >
                       {tag.name}
                     </span>

@@ -81,9 +81,9 @@ export default function ItemActions({ collectionId, itemId, itemTitle }: ItemAct
       <div className="flex items-center gap-2">
         <Link href={`/collections/${collectionId}/items/${itemId}/edit`}>
           <Button
-            variant="secondary"
+            variant="primary"
             size="sm"
-            className="p-2"
+            className="p-2 bg-blue-600 hover:bg-blue-700 text-white border-blue-700"
             title="Edit item"
             aria-label="Edit item"
           >
@@ -106,7 +106,7 @@ export default function ItemActions({ collectionId, itemId, itemTitle }: ItemAct
         <Button
           variant="danger"
           size="sm"
-          className="p-2"
+          className="p-2 bg-red-600 hover:bg-red-700 text-white border-red-700"
           onClick={() => setShowDeleteDialog(true)}
           title="Delete item"
           aria-label="Delete item"

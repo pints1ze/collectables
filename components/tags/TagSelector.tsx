@@ -91,13 +91,13 @@ export default function TagSelector({ selectedTagIds, onSelectionChange, userId 
           {selectedTags.map((tag) => (
             <div
               key={tag.id}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-primary text-primary-foreground border border-primary/20 shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-blue-600 text-white border border-blue-700 shadow-sm"
             >
               <span>{tag.name}</span>
               <button
                 type="button"
                 onClick={(e) => handleRemoveTag(tag.id, e)}
-                className="ml-1 hover:bg-primary-foreground/20 rounded-full p-0.5 transition-colors"
+                className="ml-1 hover:bg-blue-700 rounded-full p-0.5 transition-colors"
                 aria-label={`Remove ${tag.name} tag`}
               >
                 <svg
