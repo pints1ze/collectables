@@ -441,14 +441,14 @@ export default function NewItemPage() {
         
         {step === 'success' && (
           <div className="flex flex-col items-center justify-center py-12">
-            <div className="bg-green-50 border border-green-200 rounded-lg p-6 max-w-md w-full text-center">
+            <div className="bg-card border border-border rounded-lg p-6 max-w-md w-full text-center shadow-sm">
               <div className="flex justify-center mb-4">
-                <svg className="w-16 h-16 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-16 h-16 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h2 className="text-2xl font-bold text-green-900 mb-2">Item Created Successfully!</h2>
-              <p className="text-green-800 mb-6">Your item has been added to the collection.</p>
+              <h2 className="text-2xl font-bold text-foreground mb-2">Item Created Successfully!</h2>
+              <p className="text-muted-foreground mb-6">Your item has been added to the collection.</p>
               
               <div className="flex flex-col sm:flex-row gap-3">
                 <Button

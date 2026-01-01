@@ -58,16 +58,16 @@ export default function ItemImageCapture({ onImageCaptured, onCancel }: ItemImag
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Add Photo</h2>
-        <p className="text-gray-600">Take a photo with your camera or upload an image</p>
+        <h2 className="text-2xl font-bold text-foreground mb-2">Add Photo</h2>
+        <p className="text-muted-foreground">Take a photo with your camera or upload an image</p>
       </div>
 
       {!preview ? (
-        <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50">
+        <div className="flex flex-col items-center justify-center py-12 border-2 border-dashed border-border rounded-lg bg-muted/30">
           <div className="text-center space-y-4">
-            <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+            <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
               <svg
-                className="w-8 h-8 text-blue-600"
+                className="w-8 h-8 text-primary"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -99,7 +99,7 @@ export default function ItemImageCapture({ onImageCaptured, onCancel }: ItemImag
                   : 'Choose Image'}
               </Button>
             </div>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-muted-foreground">
               Supported formats: JPG, PNG, WebP
             </p>
           </div>
@@ -114,7 +114,7 @@ export default function ItemImageCapture({ onImageCaptured, onCancel }: ItemImag
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="relative w-full aspect-square max-w-md mx-auto rounded-lg overflow-hidden border-2 border-gray-200 bg-gray-100">
+          <div className="relative w-full aspect-square max-w-md mx-auto rounded-lg overflow-hidden border-2 border-border bg-muted/30">
             <Image
               src={preview}
               alt="Preview"
