@@ -165,3 +165,4 @@ export default function ItemImageCapture({ onImageCaptured, onCancel }: ItemImag
   )
 }
 
+

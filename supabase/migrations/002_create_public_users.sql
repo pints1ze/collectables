@@ -62,3 +62,4 @@ ALTER TABLE tags
   FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
+

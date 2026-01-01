@@ -42,3 +42,4 @@ bucket_id = 'item-images' AND public.check_item_ownership(name)
 - The function `public.check_item_ownership` must exist (created by the SQL migration)
 - Make sure RLS is enabled on the storage bucket (usually enabled by default)
 
+
